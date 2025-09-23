@@ -320,34 +320,42 @@
   </section>
 
   <!-- CONTACT + DEMO -->
-<div class="bottom-sections">
-  <section class="contact">
-    <h2>Talk to sales</h2>
-    <p class="muted">Prefer email? Drop a note and we’ll reply within one business hour.</p>
-    <!-- Simple Formspree example: replace YOUR-FORMSPREE-ID -->
-    <form action="https://formspree.io/f/xovkqqlw" method="POST">
-      <input type="hidden" name="_redirect" value="https://www.novadeskapp.com/thanks.html" />
-      <label for="name">Name</label>
-      <input id="name" name="name" type="text" autocomplete="name" required />
-      <label for="email">Email</label>
-      <input id="email" name="_replyto" type="email" autocomplete="email" required />
-      <label for="msg">Message</label>
-      <textarea id="msg" name="message" rows="4" placeholder="Tell us about your business…"></textarea>
-      <button class="btn btn-primary" type="submit">Send</button>
-    </form>
-    <p class="muted" style="font-size:12px;margin-top:8px;">
-      By submitting, you agree to our <a href="/privacy.html">Privacy Policy</a>.
-    </p>
-  </section>
+<section id="contact">
+  <div class="container bottom-sections">
+    <section class="contact">
+      <h2>Talk to sales</h2>
+      <p class="muted">Prefer email? Drop a note and we’ll reply within one business hour.</p>
 
-  <section class="calendly" id="calendly">
-    <h2>Book a 7-minute demo</h2>
-    <!-- Calendly inline embed -->
-    <div class="calendly-inline-widget"
-         data-url="https://calendly.com/mannkevin24/7-minute-demo"
-         style="min-width:320px;height:630px;"></div>
-  </section>
-</div>
+      <!-- Formspree -->
+      <form action="https://formspree.io/f/xovkqqlw" method="POST">
+        <input type="hidden" name="_redirect" value="https://www.novadeskapp.com/thanks.html" />
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required />
+        <label for="email">Email</label>
+        <input id="email" name="_replyto" type="email" autocomplete="email" required />
+        <label for="msg">Message</label>
+        <textarea id="msg" name="message" rows="4" placeholder="Tell us about your business…"></textarea>
+        <button class="btn btn-primary" type="submit">Send</button>
+      </form>
+
+      <p class="muted" style="font-size:12px;margin-top:8px;">
+        By submitting, you agree to our <a href="/privacy.html">Privacy Policy</a>.
+      </p>
+    </section>
+
+    <section class="calendly" id="calendly">
+      <h2>Book a 7-minute demo</h2>
+      <!-- Use iframe embed so no external JS is needed -->
+      <div style="height:560px; overflow:hidden; border-radius:12px;">
+        <iframe
+          title="Calendly"
+          src="https://calendly.com/mannkevin24/7-minute-demo"
+          style="width:100%; height:100%; border:0;"
+          loading="lazy"></iframe>
+      </div>
+    </section>
+  </div>
+</section>
 </main>
 
 <footer class="foot">
