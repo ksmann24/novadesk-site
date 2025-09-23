@@ -370,5 +370,35 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
+<script>
+  (function () {
+    const form = document.querySelector('form[action^="https://formspree.io/f/"]');
+    if (!form) return;
+    const endpoint = form.getAttribute('action');
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      const btn = form.querySelector('button[type="submit"]');
+      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' },
+          body: new FormData(form)
+        });
+        if (res.ok) {
+          window.location.href = '/thanks.html';
+        } else {
+          // Fallback: show a simple error
+          alert('Sorry, something went wrong. Please email hello@novadeskapp.com.');
+          if (btn) { btn.disabled = false; btn.textContent = 'Send'; }
+        }
+      } catch (err) {
+        alert('Network error. Please try again or email hello@novadeskapp.com.');
+        if (btn) { btn.disabled = false; btn.textContent = 'Send'; }
+      }
+    });
+  })();
+</script>
+  
 </body>
 </html>
