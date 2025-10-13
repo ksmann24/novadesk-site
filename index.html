@@ -90,7 +90,8 @@
     form { display:grid; gap:10px; }
     input, textarea { width: 100%; padding: 12px 14px; border-radius:10px; background:#0f172a; border:1px solid rgba(255,255,255,.12); color: var(--text); }
     input:focus, textarea:focus { outline: 2px solid var(--ring); border-color: var(--primary); }
-    .error { color:#ffb4b4; font-size:12px; display:none; margin-top:-6px; }
+    .error { color:#ffb4b4; font-size:12px; display:none; margin-top:-6px; display: block; }
+.error.hidden { display: none !important; }
 
     /* Responsive */
     @media (max-width: 980px) {
@@ -101,6 +102,10 @@
       .hide-mobile { display:none; }
       .menu { display:inline-flex; }
     }
+
+/* Utility */
+.hidden { display: none !important; }
+
   </style>
 
   <!-- JSON-LL -->
@@ -293,78 +298,22 @@
   <section id="contact">
     <div class="container bottom-sections">
 
-      <!-- TALK TO SALES -->
-      <form id="contactForm" class="space-y-4" novalidate>
-  <div>
-    <label for="c-name" class="block text-sm font-medium">Full name</label>
-    <input id="c-name" name="name" type="text" required
-           class="mt-1 w-full rounded border px-3 py-2"
-           placeholder="Jane Doe" />
-    <small id="c-name-err" class="text-red-600 hidden">Please enter your name.</small>
-  </div>
-
-  <div>
-    <label for="c-email" class="block text-sm font-medium">Email</label>
-    <input id="c-email" name="email" type="email" inputmode="email" required
-           class="mt-1 w-full rounded border px-3 py-2"
-           placeholder="you@example.com" />
-    <small id="c-email-err" class="text-red-600 hidden">Enter a valid email.</small>
-  </div>
-
-  <div>
-    <label for="c-phone" class="block text-sm font-medium">Phone</label>
-    <input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required
-           class="mt-1 w-full rounded border px-3 py-2"
-           placeholder="(615) 555-0123" />
-    <small id="c-phone-err" class="text-red-600 hidden">
-      Enter a valid 10-digit US phone (e.g., (615) 555-0123).
-    </small>
-
-    <p class="muted" style="font-size:12px;margin-top:4px;">
-            By providing your phone number, you agree to receive SMS messages from NovaDesk related to scheduling and your inquiry.
-            Message &amp; data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help.
-          </p>
-    
-  </div>
-
-  <div>
-    <label for="c-msg" class="block text-sm font-medium">Message</label>
-    <textarea id="c-msg" name="message" rows="4"
-              class="mt-1 w-full rounded border px-3 py-2"
-              placeholder="Tell us a bit about your needs…"></textarea>
-  </div>
-
-  <button id="c-submit" type="submit"
-          class="inline-flex items-center justify-center rounded bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 disabled:opacity-50">
-    Send
-  </button>
-
-  <p id="c-success" class="text-green-700 hidden">Thanks! We received your message and will reply shortly.</p>
-  <p id="c-fail" class="text-red-700 hidden">Oops — couldn’t send your message. Please try again.</p>
-
-        <p class="muted" style="font-size:12px;margin-top:8px;">
-          By submitting, you agree to our <a href="/privacy.html">Privacy Policy</a>.
-        </p>
-        
-</form>
-
-      
-
-      <!-- BOOK DEMO -->
+<!-- BOOK DEMO -->
       <section class="calendly" id="booking">
         <h2>Book a 7-minute demo</h2>
 
         <form id="book-demo" onsubmit="return submitBooking(event)" class="card" style="display:grid;gap:10px; padding:16px; border-radius:12px; max-width:520px" novalidate>
           <label for="bname">Name</label>
-          <input id="bname" name="name" type="text" autocomplete="name" required />
+          <input id="bname" name="name" type="text" autocomplete="name" required required placeholder="Jane Doe" />
+<small class="error hidden" data-error="name">Please enter your name</small>
 
           <label for="bemail">Email</label>
-          <input id="bemail" name="email" type="email" autocomplete="email" required />
-          <small id="bemailError" class="error">Please enter a valid email address.</small>
+          <input id="bemail" name="email" type="email" autocomplete="email" required placeholder="you@example.com" />
+          <small class="error hidden" data-error="email">Please enter a valid email address</small>
 
           <label for="bphone">Phone</label>
           <input id="bphone" name="phone" type="tel" inputmode="tel" placeholder="(555) 123-4567" autocomplete="tel" required />
-          <small id="bphoneError" class="error">Please enter a valid 10-digit US phone number.</small>
+          <small class="error hidden" data-error="phone">Please enter a valid phone number</small>
 
           <p class="muted" style="font-size:12px;margin-top:4px;">
             By providing your phone number, you agree to receive SMS messages from NovaDesk related to scheduling and your inquiry.
@@ -374,10 +323,57 @@
           <label for="bwhen">Preferred time</label>
           <input id="bwhen" name="when" type="datetime-local" required />
 
-          <button class="btn btn-primary" type="submit">Book Demo</button>
+          <button id="book-submit" class="btn btn-primary" type="submit">Book Demo</button>
           <p id="bstatus" class="muted" style="margin-top:8px;"></p>
         </form>
       </section>
+
+
+     <!-- TALK TO SALES -->
+<section id="sales" style="flex:1; min-width:300px;">
+  <h2 style="margin:0 0 12px 0">Talk to sales</h2>
+
+  <form id="contactForm"
+        class="card"
+        style="display:grid;gap:10px; padding:16px; border-radius:12px; max-width:520px"
+        novalidate>
+
+    <label for="c-name">Name</label>
+    <input id="c-name" name="name" type="text" required placeholder="John Doe" />
+    <small class="error hidden" data-error="name">Please enter your name</small>
+
+    <label for="c-email">Email</label>
+    <input id="c-email" name="email" type="email" inputmode="email" required placeholder="you@example.com" />
+    <small class="error hidden" data-error="email">Please enter a valid email address</small>
+
+    <label for="c-phone">Phone</label>
+    <input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="(615) 555-0123" />
+    <small class="error hidden" data-error="phone">Please enter a valid phone number</small>
+
+    <p class="muted" style="font-size:12px;margin-top:4px;">
+      By providing your phone number, you agree to receive SMS messages from NovaDesk related to scheduling and your inquiry.
+      Message &amp; data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help.
+    </p>
+
+    <label for="c-msg">Message</label>
+    <textarea id="c-msg" name="message" rows="4" placeholder="Tell us a little about your buiness…"></textarea>
+<small class="error hidden" data-error="message">Please tell us a little about your business</small>
+
+    <button id="c-submit" type="submit" class="btn btn-primary">Send</button>
+
+    <!-- success/error — hidden until shown by JS -->
+    <p id="c-success" class="hidden" style="color:#22c55e;">Thanks! We received your message and will reply shortly.</p>
+    <p id="c-fail" class="hidden" style="color:#ff6b6b;">Oops — couldn’t send your message. Please try again.</p>
+
+    <p class="muted" style="font-size:12px;margin-top:8px;">
+      By submitting, you agree to our <a href="/privacy.html">Privacy Policy</a>.
+    </p>
+  </form>
+</section>
+
+      
+
+      
 
     </div>
   </section>
@@ -411,110 +407,149 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
-<!-- SALES FORM SUBMIT (Formspree) with validation -->
+<!-- SALES FORM SUBMIT (to /contact) with sequential validation -->
 <script>
   (function () {
-    const form = document.getElementById('sales-form');
+    const form = document.getElementById('contactForm');
     if (!form) return;
 
-    const phoneInput = document.getElementById('phone');
-    const phoneError = document.getElementById('phoneError');
-    const emailInput = document.getElementById('email');
-    const emailError = document.getElementById('emailError');
-    const phoneE164Hidden = document.getElementById('phone_e164');
+    const fields = {
+      name:  form.querySelector('[name="name"]'),
+      email: form.querySelector('[name="email"]'),
+      phone: form.querySelector('[name="phone"]'),
+      message: form.querySelector('[name="message"]'),
+    };
+    const errs = {
+      name:  form.querySelector('[data-error="name"]'),
+      email: form.querySelector('[data-error="email"]'),
+      phone: form.querySelector('[data-error="phone"]'),
+      message: form.querySelector('[data-error="message"]'),
+    };
+    const successEl = document.getElementById('c-success');
+    const failEl    = document.getElementById('c-fail');
+    const submitBtn = document.getElementById('c-submit');
 
     // live phone mask
-    attachPhoneMask('phone', 'phoneError');
+    fields.phone.addEventListener('input', () => {
+      fields.phone.value = formatUSPhone(fields.phone.value);
+    });
 
-    form.addEventListener('submit', async function (e) {
+    function hideAllErrors(){ Object.values(errs).forEach(el => el && el.classList.add('hidden')); }
+    function firstInvalid(){
+      if (!fields.name.value.trim()) return 'name';
+      if (!isValidEmail(fields.email.value)) return 'email';
+      if (!isValidPhone10(fields.phone.value)) return 'phone';
+      if (!fields.message.value.trim()) return 'message';
+      return null;
+    }
+
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      hideAllErrors();
+      successEl.classList.add('hidden');
+      failEl.classList.add('hidden');
 
-      // clear errors
-      phoneError.style.display = 'none';
-      emailError.style.display = 'none';
-
-      // validate phone (required, 10 digits)
-      const e164 = toE164US(phoneInput.value);
-      if (!e164) {
-        phoneError.style.display = 'inline';
-        return;
-      }
-      phoneE164Hidden.value = e164;
-
-      // validate email (required)
-      if (!isValidEmail(emailInput.value)) {
-        emailError.style.display = 'inline';
+      const bad = firstInvalid();
+      if (bad) {
+        errs[bad].classList.remove('hidden');
+        fields[bad].focus();
         return;
       }
 
-      // disable button
-      const btn = form.querySelector('button[type="submit"]');
-      if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
-
+      // ready to submit
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
       try {
-        const endpoint = form.getAttribute('action');
-        const fd = new FormData(form);
-        const res = await fetch(endpoint, { method: 'POST', headers: { 'Accept': 'application/json' }, body: fd });
+        const res = await fetch('/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: fields.name.value.trim(),
+            email: fields.email.value.trim(),
+            phone: fields.phone.value.trim(),
+            message: fields.message.value.trim()
+          })
+        });
         if (res.ok) {
-          window.location.href = '/thanks.html';
+          successEl.classList.remove('hidden');
+          form.reset();
         } else {
-          alert('Sorry, something went wrong. Please email hello@novadeskapp.com.');
-          if (btn) { btn.disabled = false; btn.textContent = 'Send'; }
+          failEl.classList.remove('hidden');
         }
-      } catch (err) {
-        alert('Network error. Please try again or email hello@novadeskapp.com.');
-        const btn = form.querySelector('button[type="submit"]');
-        if (btn) { btn.disabled = false; btn.textContent = 'Send'; }
+      } catch {
+        failEl.classList.remove('hidden');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send';
       }
+    });
+
+    // per-field hide-on-input
+    Object.keys(fields).forEach(k => {
+      fields[k].addEventListener('input', () => errs[k].classList.add('hidden'));
+      fields[k].addEventListener('blur',  () => {
+        // Show only if it’s currently the first invalid
+        hideAllErrors();
+        const bad = firstInvalid();
+        if (bad) errs[bad].classList.remove('hidden');
+      });
     });
   })();
 </script>
 
+
 <!-- DEMO BOOKING (talks to your API) -->
 <script>
   // ----- CONFIGURE THIS -----
-  const API_BASE = "http://localhost:4000";  // change to your prod API base when deployed
+  const API_BASE = "http://localhost:4000";  // change to prod when deployed
   const TENANT_ID = "sandbox-dental";
   const DEMO_MIN = 7;
 
+  function getBErr(key) {
+    return document.querySelector(`#book-demo [data-error="${key}"]`);
+  }
+  function hideBAll() {
+    ['name','email','phone'].forEach(k => getBErr(k)?.classList.add('hidden'));
+  }
+  function firstBadDemo(name, email, phone) {
+    if (!name.trim()) return 'name';
+    if (!isValidEmail(email)) return 'email';
+    if (!isValidPhone10(phone)) return 'phone';
+    return null;
+  }
+
   async function submitBooking(e) {
     e.preventDefault();
-    const statusEl = document.getElementById('bstatus');
     const form = document.getElementById('book-demo');
-
-    // clear errors
-    document.getElementById('bphoneError').style.display = 'none';
-    document.getElementById('bemailError').style.display = 'none';
+    const statusEl = document.getElementById('bstatus');
 
     // fields
-    const whenField = document.getElementById('bwhen').value;
     const name  = document.getElementById('bname').value.trim();
     const email = document.getElementById('bemail').value.trim();
     const phone = document.getElementById('bphone').value.trim();
+    const whenField = document.getElementById('bwhen').value;
 
-    // validate email
-    if (!isValidEmail(email)) {
-      document.getElementById('bemailError').style.display = 'inline';
+    // validation (sequential, show first error only)
+    hideBAll();
+    const bad = firstBadDemo(name, email, phone);
+    if (bad) {
+      const badEl = {name:'bname', email:'bemail', phone:'bphone'}[bad];
+      getBErr(bad).classList.remove('hidden');
+      document.getElementById(badEl).focus();
       return false;
     }
-
-    // validate phone (required, 10 digits)
-    const phoneE164 = toE164US(phone);
-    if (!phoneE164) {
-      document.getElementById('bphoneError').style.display = 'inline';
-      return false;
-    }
-
-    // time
     if (!whenField) {
       statusEl.textContent = "Please pick a date & time.";
       return false;
     }
+
+    // build times
     const startLocal = new Date(whenField);
     const startIso = startLocal.toISOString();
     const endIso = new Date(startLocal.getTime() + DEMO_MIN * 60000).toISOString();
 
     statusEl.textContent = "Booking...";
+    const phoneE164 = toE164US(phone);
 
     try {
       const payload = {
@@ -539,105 +574,153 @@
       } else {
         statusEl.textContent = `Error: ${data.error || 'Failed to create event'}`;
       }
-    } catch (err) {
+    } catch {
       statusEl.textContent = "Network error. Please try again.";
     }
     return false;
   }
+
+  // Phone helpers reused by both forms
+  function digitsOnly(s) { return String(s || '').replace(/\D/g, ''); }
+  function formatUSPhone(input) {
+    const d = digitsOnly(input).slice(0, 10);
+    if (!d) return '';
+    if (d.length < 4) return `(${d}`;
+    if (d.length < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
+    return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+  }
+  function isValidPhone10(input) { return digitsOnly(input).length === 10; }
+  function toE164US(input) {
+    const d = digitsOnly(input);
+    if (d.length === 10) return `+1${d}`;
+    if (d.length === 11 && d.startsWith('1')) return `+${d}`;
+    return null;
+  }
+  function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim()); }
+  function formatPhoneLocal(input) { return formatUSPhone(input); }
+
+  // Live mask for the demo phone field
+  (function(){
+    const bphone = document.getElementById('bphone');
+    if (bphone) {
+      bphone.addEventListener('input', () => {
+        bphone.value = formatUSPhone(bphone.value);
+      });
+    }
+  })();
 </script>
+
 
 <!-- Shared helpers (masking + validation) -->
 <script>
-  // ——— shared validators/formatters ———
-  function digitsOnly(s) {
-    return String(s || '').replace(/\D/g, '');
-  }
+  // helpers
+  function digitsOnly(s) { return String(s || '').replace(/\D/g, ''); }
   function formatUSPhone(input) {
     const d = digitsOnly(input).slice(0, 10);
-    const len = d.length;
-    if (len === 0) return '';
-    if (len < 4) return `(${d}`;
-    if (len < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
+    if (!d) return '';
+    if (d.length < 4) return `(${d}`;
+    if (d.length < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
     return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
   }
-  function isValidPhone10(input) {
-    return digitsOnly(input).length === 10;
-  }
-  function isValidEmail(s) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim());
-  }
-  function show(el) { el.classList.remove('hidden'); }
-  function hide(el) { el.classList.add('hidden'); }
+  function isValidPhone10(input) { return digitsOnly(input).length === 10; }
+  function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim()); }
+  function show(el) { el && el.classList.remove('hidden'); }
+  function hide(el) { el && el.classList.add('hidden'); }
 
-  // ——— Talk to sales form wiring ———
-  (function wireContactForm() {
-    const form = document.getElementById('contactForm');
+  /**
+   * Sequential validator:
+   * - Shows only the FIRST invalid field's message (top -> bottom).
+   * - Focuses that field.
+   * - On blur / input, hides the message once valid.
+   * fieldsOrder = ['name','email','phone','message'] (we skip ones that don't exist in the form)
+   */
+  function wireSequentialValidation(formId, submitBtnId, options = {}) {
+    const form = document.getElementById(formId);
     if (!form) return;
 
-    const nameEl   = document.getElementById('c-name');
-    const emailEl  = document.getElementById('c-email');
-    const phoneEl  = document.getElementById('c-phone');
-    const msgEl    = document.getElementById('c-msg');
-    const submitEl = document.getElementById('c-submit');
+    const submitBtn = submitBtnId ? document.getElementById(submitBtnId) : null;
+    const fieldsOrder = options.fieldsOrder || ['name','email','phone','message'];
 
-    const nameErr  = document.getElementById('c-name-err');
-    const emailErr = document.getElementById('c-email-err');
-    const phoneErr = document.getElementById('c-phone-err');
-
-    const okEl     = document.getElementById('c-success');
-    const failEl   = document.getElementById('c-fail');
-
-    // live phone formatting
-    phoneEl.addEventListener('input', () => {
-      const caret = phoneEl.selectionStart;
-      const before = phoneEl.value;
-      phoneEl.value = formatUSPhone(before);
-      // keep caret behavior simple
+    // map field elements and error <small data-error="...">
+    const els = {};
+    const errs = {};
+    fieldsOrder.forEach(key => {
+      els[key]  = form.querySelector(`[name="${key}"]`);
+      errs[key] = form.querySelector(`[data-error="${key}"]`);
     });
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      hide(okEl); hide(failEl);
-      hide(nameErr); hide(emailErr); hide(phoneErr);
+    // live phone formatting if present
+    if (els.phone) {
+      els.phone.addEventListener('input', () => {
+        els.phone.value = formatUSPhone(els.phone.value);
+      });
+    }
 
-      let valid = true;
-      if (!nameEl.value.trim()) { show(nameErr); valid = false; }
-      if (!isValidEmail(emailEl.value)) { show(emailErr); valid = false; }
-      if (!isValidPhone10(phoneEl.value)) { show(phoneErr); valid = false; }
-
-      if (!valid) return;
-
-      submitEl.disabled = true;
-
-      try {
-        const res = await fetch('/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: nameEl.value.trim(),
-            email: emailEl.value.trim(),
-            phone: phoneEl.value.trim(),
-            message: msgEl.value.trim()
-          })
-        });
-        const data = await res.json().catch(() => ({}));
-
-        if (res.ok && data.ok) {
-          show(okEl);
-          form.reset();
-        } else {
-          console.error('contact failed', data);
-          show(failEl);
-        }
-      } catch (err) {
-        console.error('contact error', err);
-        show(failEl);
-      } finally {
-        submitEl.disabled = false;
+    function fieldValid(key) {
+      const el = els[key];
+      if (!el) return true; // missing field is "valid"/ignored
+      const val = el.value || '';
+      switch (key) {
+        case 'name': return !!val.trim();
+        case 'email': return isValidEmail(val);
+        case 'phone': return isValidPhone10(val);
+        case 'message': return !!val.trim(); // required per your spec
+        default: return !!val.trim();
       }
+    }
+
+    function hideAllErrors() {
+      fieldsOrder.forEach(k => hide(errs[k]));
+    }
+
+    function firstInvalidKey() {
+      for (const k of fieldsOrder) {
+        if (els[k] && !fieldValid(k)) return k;
+      }
+      return null;
+    }
+
+    // show next invalid on submit
+    form.addEventListener('submit', (e) => {
+      hideAllErrors();
+      const bad = firstInvalidKey();
+      if (bad) {
+        e.preventDefault();
+        show(errs[bad]);
+        els[bad].focus();
+        return false;
+      }
+      // allow submit to continue (your existing submit handler or default action)
+      return true;
     });
-  })();
+
+    // when user fixes a field, hide its error; on blur, if still bad, show it (only if it’s the first invalid)
+    fieldsOrder.forEach(k => {
+      const el = els[k];
+      if (!el) return;
+
+      el.addEventListener('input', () => {
+        if (fieldValid(k)) hide(errs[k]);
+      });
+
+      el.addEventListener('blur', () => {
+        // Only show if this field is *currently* the first invalid
+        const bad = firstInvalidKey();
+        if (bad === k) show(errs[k]); else hide(errs[k]);
+      });
+    });
+  }
+
+  // Wire both forms:
+  // contact/talk-to-sales
+  wireSequentialValidation('contactForm', 'c-submit', { fieldsOrder: ['name','email','phone','message'] });
+
+  // book-a-demo (if you don't have a message field here, it will be ignored automatically)
+  wireSequentialValidation('book-demo', 'book-submit', { fieldsOrder: ['name','email','phone'] });
+
 </script>
+
+
 
 </body>
 </html>
