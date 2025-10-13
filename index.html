@@ -294,43 +294,61 @@
     <div class="container bottom-sections">
 
       <!-- TALK TO SALES -->
-      <section class="contact">
-        <h2>Talk to sales</h2>
-        <p class="muted">Prefer email? Drop a note and we’ll reply within one business hour.</p>
+      <form id="contactForm" class="space-y-4" novalidate>
+  <div>
+    <label for="c-name" class="block text-sm font-medium">Full name</label>
+    <input id="c-name" name="name" type="text" required
+           class="mt-1 w-full rounded border px-3 py-2"
+           placeholder="Jane Doe" />
+    <small id="c-name-err" class="text-red-600 hidden">Please enter your name.</small>
+  </div>
 
-        <!-- Formspree -->
-        <form id="sales-form" action="https://formspree.io/f/xovkqqlw" method="POST" novalidate>
-          <input type="hidden" name="_redirect" value="https://www.novadeskapp.com/thanks.html" />
-          <label for="name">Name</label>
-          <input id="name" name="name" type="text" autocomplete="name" required />
+  <div>
+    <label for="c-email" class="block text-sm font-medium">Email</label>
+    <input id="c-email" name="email" type="email" inputmode="email" required
+           class="mt-1 w-full rounded border px-3 py-2"
+           placeholder="you@example.com" />
+    <small id="c-email-err" class="text-red-600 hidden">Enter a valid email.</small>
+  </div>
 
-          <label for="phone">Phone Number</label>
-          <input id="phone" name="phone" type="tel" inputmode="tel" placeholder="(555) 123-4567" autocomplete="tel" required />
-          <small id="phoneError" class="error">Please enter a valid 10-digit US phone number.</small>
+  <div>
+    <label for="c-phone" class="block text-sm font-medium">Phone</label>
+    <input id="c-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required
+           class="mt-1 w-full rounded border px-3 py-2"
+           placeholder="(615) 555-0123" />
+    <small id="c-phone-err" class="text-red-600 hidden">
+      Enter a valid 10-digit US phone (e.g., (615) 555-0123).
+    </small>
 
-          <p class="muted" style="font-size:12px;margin-top:4px;">
+    <p class="muted" style="font-size:12px;margin-top:4px;">
             By providing your phone number, you agree to receive SMS messages from NovaDesk related to scheduling and your inquiry.
             Message &amp; data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help.
           </p>
+    
+  </div>
 
-          <label for="email">Email</label>
-          <input id="email" name="_replyto" type="email" autocomplete="email" required />
-          <small id="emailError" class="error">Please enter a valid email address.</small>
+  <div>
+    <label for="c-msg" class="block text-sm font-medium">Message</label>
+    <textarea id="c-msg" name="message" rows="4"
+              class="mt-1 w-full rounded border px-3 py-2"
+              placeholder="Tell us a bit about your needs…"></textarea>
+  </div>
 
-          <label for="msg">Message</label>
-          <textarea id="msg" name="message" rows="4" placeholder="Tell us about your business…"></textarea>
+  <button id="c-submit" type="submit"
+          class="inline-flex items-center justify-center rounded bg-indigo-600 px-4 py-2 font-medium text-white hover:bg-indigo-700 disabled:opacity-50">
+    Send
+  </button>
 
-          <input type="hidden" name="consent_source" value="web_form" />
-          <input type="hidden" name="consent_text" value="By providing your phone number, you agree to receive SMS messages from NovaDesk related to scheduling and your inquiry. Message & data rates may apply. Reply STOP to opt out or HELP for help." />
-          <input type="hidden" id="phone_e164" name="phone_e164" value=""/>
-
-          <button class="btn btn-primary" type="submit">Send</button>
-        </form>
+  <p id="c-success" class="text-green-700 hidden">Thanks! We received your message and will reply shortly.</p>
+  <p id="c-fail" class="text-red-700 hidden">Oops — couldn’t send your message. Please try again.</p>
 
         <p class="muted" style="font-size:12px;margin-top:8px;">
           By submitting, you agree to our <a href="/privacy.html">Privacy Policy</a>.
         </p>
-      </section>
+        
+</form>
+
+      
 
       <!-- BOOK DEMO -->
       <section class="calendly" id="booking">
@@ -347,6 +365,11 @@
           <label for="bphone">Phone</label>
           <input id="bphone" name="phone" type="tel" inputmode="tel" placeholder="(555) 123-4567" autocomplete="tel" required />
           <small id="bphoneError" class="error">Please enter a valid 10-digit US phone number.</small>
+
+          <p class="muted" style="font-size:12px;margin-top:4px;">
+            By providing your phone number, you agree to receive SMS messages from NovaDesk related to scheduling and your inquiry.
+            Message &amp; data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help.
+          </p>
 
           <label for="bwhen">Preferred time</label>
           <input id="bwhen" name="when" type="datetime-local" required />
@@ -525,45 +548,95 @@
 
 <!-- Shared helpers (masking + validation) -->
 <script>
+  // ——— shared validators/formatters ———
   function digitsOnly(s) {
     return String(s || '').replace(/\D/g, '');
   }
-  function formatPhoneLocal(input) {
+  function formatUSPhone(input) {
     const d = digitsOnly(input).slice(0, 10);
-    const p1 = d.slice(0, 3);
-    const p2 = d.slice(3, 6);
-    const p3 = d.slice(6, 10);
-    if (d.length <= 3) return p1;
-    if (d.length <= 6) return `(${p1}) ${p2}`;
-    return `(${p1}) ${p2}-${p3}`;
+    const len = d.length;
+    if (len === 0) return '';
+    if (len < 4) return `(${d}`;
+    if (len < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
+    return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
   }
-  function toE164US(input) {
-    const d = digitsOnly(input);
-    if (d.length !== 10) return null;
-    return `+1${d}`;
+  function isValidPhone10(input) {
+    return digitsOnly(input).length === 10;
   }
   function isValidEmail(s) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim());
   }
-  function attachPhoneMask(inputId, errorId) {
-    const el = document.getElementById(inputId);
-    const err = document.getElementById(errorId);
-    if (!el) return;
-    el.addEventListener('input', () => {
-      el.value = formatPhoneLocal(el.value);
-      if (err) err.style.display = 'none';
+  function show(el) { el.classList.remove('hidden'); }
+  function hide(el) { el.classList.add('hidden'); }
+
+  // ——— Talk to sales form wiring ———
+  (function wireContactForm() {
+    const form = document.getElementById('contactForm');
+    if (!form) return;
+
+    const nameEl   = document.getElementById('c-name');
+    const emailEl  = document.getElementById('c-email');
+    const phoneEl  = document.getElementById('c-phone');
+    const msgEl    = document.getElementById('c-msg');
+    const submitEl = document.getElementById('c-submit');
+
+    const nameErr  = document.getElementById('c-name-err');
+    const emailErr = document.getElementById('c-email-err');
+    const phoneErr = document.getElementById('c-phone-err');
+
+    const okEl     = document.getElementById('c-success');
+    const failEl   = document.getElementById('c-fail');
+
+    // live phone formatting
+    phoneEl.addEventListener('input', () => {
+      const caret = phoneEl.selectionStart;
+      const before = phoneEl.value;
+      phoneEl.value = formatUSPhone(before);
+      // keep caret behavior simple
     });
-    el.addEventListener('blur', () => {
-      // on blur, show error if not valid length
-      if (!toE164US(el.value)) {
-        if (err) err.style.display = 'inline';
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hide(okEl); hide(failEl);
+      hide(nameErr); hide(emailErr); hide(phoneErr);
+
+      let valid = true;
+      if (!nameEl.value.trim()) { show(nameErr); valid = false; }
+      if (!isValidEmail(emailEl.value)) { show(emailErr); valid = false; }
+      if (!isValidPhone10(phoneEl.value)) { show(phoneErr); valid = false; }
+
+      if (!valid) return;
+
+      submitEl.disabled = true;
+
+      try {
+        const res = await fetch('/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            name: nameEl.value.trim(),
+            email: emailEl.value.trim(),
+            phone: phoneEl.value.trim(),
+            message: msgEl.value.trim()
+          })
+        });
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.ok) {
+          show(okEl);
+          form.reset();
+        } else {
+          console.error('contact failed', data);
+          show(failEl);
+        }
+      } catch (err) {
+        console.error('contact error', err);
+        show(failEl);
+      } finally {
+        submitEl.disabled = false;
       }
     });
-  }
-
-  // attach masks for both phone inputs
-  attachPhoneMask('phone', 'phoneError');
-  attachPhoneMask('bphone', 'bphoneError');
+  })();
 </script>
 
 </body>
