@@ -490,7 +490,7 @@
       const data = await res.json().catch(() => ({}));
 
       if (res.ok && data.ok) {
-        statusEl.innerHTML = `Booked! We emailed you an invite. <a href="${data.htmlLink}" target="_blank" rel="noopener">View in Google Calendar</a>`;
+        statusEl.textContent = "Booked! We’ve emailed your confirmation and calendar invite.";
         document.getElementById('book-demo').reset();
       } else {
         statusEl.textContent = `Error: ${data.error || 'Failed to create event'}`;
