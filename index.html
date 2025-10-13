@@ -354,7 +354,7 @@
     <section class="calendly" id="booking">
   <h2>Book a 7-minute demo</h2>
 
-  <form id="book-demo" onsubmit="return submitBooking(event)" class="card" style="display:grid;gap:10px; padding:16px; border-radius:12px;">
+  <form id="book-demo" onsubmit="return submitBooking(event)" class="card" style="display:grid;gap:10px; padding:16px; border-radius:12px; max-width:520px">
     <label for="bname">Name</label>
     <input id="bname" name="name" type="text" autocomplete="name" required />
 
@@ -435,8 +435,19 @@
 </script>
 
   <script>
-  // Replace with your API base (Cloud Run or your Nest dev/prod URL)
-  const API_BASE = "https://YOUR-API-BASE.example.com"; // e.g., https://ai-receptionist-demo-xxxxx-uc.a.run.app
+  // ----- CONFIGURE THIS -----
+  // Where your API is hosted:
+  //   - For local testing: "http://localhost:4000"
+  //   - For prod: your deployed API base URL
+  const API_BASE = "http://localhost:4000";
+
+  // Which tenant should receive these demo bookings.
+  // If you want them on your existing sandbox calendar, keep "sandbox-dental".
+  // If you made a dedicated tenant (e.g. "demo-landing"), put that id here.
+  const TENANT_ID = "sandbox-dental";
+
+  // Demo length (minutes)
+  const DEMO_MIN = 7;
 
   async function submitBooking(e) {
     e.preventDefault();
@@ -445,27 +456,40 @@
 
     try {
       const whenField = document.getElementById('bwhen').value;
-      // Convert `datetime-local` to ISO; browsers return local time
-      const whenISO = new Date(whenField).toISOString();
+      if (!whenField) {
+        statusEl.textContent = "Please pick a date & time.";
+        return false;
+      }
 
+      // datetime-local returns local time; convert to UTC ISO for the API
+      const startLocal = new Date(whenField);
+      const startIso = startLocal.toISOString();
+      const endIso = new Date(startLocal.getTime() + DEMO_MIN * 60000).toISOString();
+
+      const name  = document.getElementById('bname').value.trim();
+      const email = document.getElementById('bemail').value.trim();
+      const phone = document.getElementById('bphone').value.trim();
+
+      // The API requires: tenantId, startIso, endIso, phone (optional), notes (optional)
+      // We’ll include name/email in notes.
       const payload = {
-        name:  document.getElementById('bname').value.trim(),
-        email: document.getElementById('bemail').value.trim(),
-        phone: document.getElementById('bphone').value.trim(),
-        whenISO
+        tenantId: TENANT_ID,
+        startIso,
+        endIso,
+        phone: phone || undefined,
+        notes: `Website demo request — ${name} <${email}>${phone ? `, ${phone}` : ''}`
       };
 
-      const res = await fetch(`${API_BASE}/api/book`, {
+      const res = await fetch(`${API_BASE}/calendar/book`, {
         method: 'POST',
-        headers: {'Content-Type':'application/json'},
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(payload)
       });
 
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
 
       if (res.ok && data.ok) {
-        statusEl.innerHTML = `Booked! Check your email for the invite. <a href="${data.htmlLink}" target="_blank" rel="noopener">View in Calendar</a>`;
-        // Optional: clear the form
+        statusEl.innerHTML = `Booked! We emailed you an invite. <a href="${data.htmlLink}" target="_blank" rel="noopener">View in Google Calendar</a>`;
         document.getElementById('book-demo').reset();
       } else {
         statusEl.textContent = `Error: ${data.error || 'Failed to create event'}`;
@@ -473,6 +497,8 @@
     } catch (err) {
       statusEl.textContent = "Network error. Please try again.";
     }
+
+    return false;
   }
 </script>
   
