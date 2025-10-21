@@ -864,10 +864,12 @@ function withinHours(slot) {
 
       async function fetchDaySlots(isoDate) {
     // Apps Script: GET ?action=availability&date=YYYY-MM-DD&durationMin=30
-    const url = `${GAS_BASE}?action=availability&date=${isoDate}&durationMin=${DURATION_MIN}`;
-    const res = await fetch(url, { method: 'GET' });
-    if (!res.ok) throw new Error(`availability failed: ${res.status}`);
-    return res.json();
+      const url = `${GAS_BASE}?action=availability&date=${isoDate}&durationMin=${DURATION_MIN}`;
+  const res = await fetch(url, { method: 'GET' });
+  const raw = await res.text();                         // ← debug
+  console.log('[avail raw]', res.status, url, raw);     // ← debug
+  if (!res.ok) throw new Error(`availability failed: ${res.status}`);
+  return JSON.parse(raw);
   }
 
   function renderBatch(container, fromIndex) {
