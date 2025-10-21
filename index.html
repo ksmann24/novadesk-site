@@ -619,20 +619,22 @@
 
   try {
 
-        // Apps Script: POST ?action=book  (body: { name,email,phone,startIso,endIso })
+        // Apps Script: POST ?action=book  (form-encoded: name,email,phone,startIso,endIso)
+    const params = new URLSearchParams();
+    params.set('name',    name);
+    params.set('email',   email);
+    params.set('phone',   phoneE164);  // keep E.164 (+1XXXXXXXXXX)
+    params.set('startIso', startIso);
+    params.set('endIso',   endIso);
+
     const res = await fetch(`${GAS_BASE}?action=book`, {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        name,
-        email,
-        phone: phoneE164,     // keep E.164 (+1XXXXXXXXXX)
-        startIso,
-        endIso
-      })
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: params.toString()
     });
 
-    const data = await res.json().catch(() => ({}));
+    let data = {};
+    try { data = await res.json(); } catch {}
 
     if (res.ok && data.ok) {
       statusEl.textContent = "Booked! We’ve emailed your confirmation and calendar invite.";
@@ -642,7 +644,7 @@
       document.getElementById('bStartIso').value = '';
       document.getElementById('bEndIso').value = '';
     } else {
-      statusEl.textContent = `Error: ${data.error || 'Failed to create event'}`;
+      statusEl.textContent = `Error: ${data.error || (res.status + ' ' + res.statusText)}`;
     }
   } catch {
     statusEl.textContent = "Network error. Please try again.";
