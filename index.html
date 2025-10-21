@@ -59,6 +59,19 @@
     .btn:hover { border-color: rgba(255,255,255,.25); }
     .btn-primary { background: linear-gradient(180deg, var(--primary), var(--primary-600)); border-color: transparent; }
     .btn-primary:hover { filter: brightness(1.05); }
+
+.day-toolbar {
+  display:flex; align-items:center; justify-content:space-between;
+  gap:10px; margin:10px 0 6px;
+}
+.day-display { display:flex; align-items:center; gap:8px; }
+.btn.small { padding:6px 10px; font-size:13px; }
+.icon-btn {
+  background:transparent; border:1px solid rgba(255,255,255,.12);
+  border-radius:8px; padding:6px 8px; cursor:pointer; color:var(--text);
+}
+.btn.slot.selected { outline:2px solid var(--primary); background:rgba(59,130,246,.15); }
+
     .hero { padding: 72px 0 32px; background: radial-gradient(800px 400px at 60% -10%, rgba(59,130,246,.25), transparent), radial-gradient(600px 300px at 20% -10%, rgba(34,197,94,.18), transparent); }
     .hero-wrap { display:grid; grid-template-columns: 1.1fr .9fr; gap:40px; align-items:center; }
     h1 { font-size: clamp(32px, 5vw, 52px); line-height:1.06; margin: 0 0 12px; }
@@ -90,8 +103,8 @@
     form { display:grid; gap:10px; }
     input, textarea { width: 100%; padding: 12px 14px; border-radius:10px; background:#0f172a; border:1px solid rgba(255,255,255,.12); color: var(--text); }
     input:focus, textarea:focus { outline: 2px solid var(--ring); border-color: var(--primary); }
-    .error { color:#ffb4b4; font-size:12px; display:none; margin-top:-6px; display: block; }
-.error.hidden { display: none !important; }
+    .error { color:#ffb4b4; font-size:12px; margin-top:-6px; display:block; }
+.error.hidden { display:none !important; }
 
     /* Responsive */
     @media (max-width: 980px) {
@@ -106,9 +119,25 @@
 /* Utility */
 .hidden { display: none !important; }
 
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0 0 0 0);
+  white-space: nowrap; border: 0;
+}
+
+.icon-btn:hover { outline:2px solid var(--ring); }
+
+@media (max-width: 520px) {
+  .slots-toolbar { flex-wrap: wrap; gap: 8px; }
+  .slots-toolbar > div, .slots-toolbar > button { flex: 1 0 auto; }
+  .slots-toolbar .btn-row { margin-left: auto; }
+}
+
   </style>
 
-  <!-- JSON-LL -->
+  <!-- JSON-LD -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -142,7 +171,7 @@
       <a href="#how" onclick="toggleMenu(true)">How it works</a>
       <a href="#pricing" onclick="toggleMenu(true)">Pricing</a>
       <a href="#contact" onclick="toggleMenu(true)">Contact</a>
-      <a class="btn btn-primary" href="#demo" onclick="toggleMenu(true)">Book demo</a>
+      <a class="btn btn-primary" href="#booking" onclick="toggleMenu(true)">Book demo</a>
     </div>
   </div>
 </header>
@@ -233,7 +262,6 @@
         <div class="cta-row"><a class="btn btn-primary" href="#booking">See a live demo</a></div>
       </div>
       <div class="card">
-        <h3 style="margin-top:0">Industries</h3>
         <p class="muted">Built for local & appointment-based businesses.</p>
         <div class="grid-2">
           <ul class="list">
@@ -320,11 +348,44 @@
             Message &amp; data rates may apply. Reply <strong>STOP</strong> to opt out or <strong>HELP</strong> for help.
           </p>
 
-          <label for="bwhen">Preferred time</label>
-          <input id="bwhen" name="when" type="datetime-local" required />
+          <!-- Slot picker -->
+<div id="slot-picker" class="card" style="padding:16px;margin-top:8px">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+    <strong>Available times</strong>
+    <div class="slots-toolbar" style="display:flex;align-items:center;gap:10px;justify-content:space-between;margin:10px 0 6px 0">
+  <!-- left spacer keeps the center truly centered -->
+  <div style="width:88px"></div>
+
+  <!-- Center: calendar button -->
+  <button id="slots-calendar" class="icon-btn" type="button" aria-label="Pick a date" title="Pick a date"
+          style="display:inline-flex;align-items:center;gap:6px;padding:8px 10px;border:1px solid rgba(255,255,255,.12);border-radius:10px;background:#0f172a;color:var(--text)">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <rect x="3" y="4" width="18" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+      <path d="M7 2v4M17 2v4M3 9h18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <span class="hide-mobile">Pick date</span>
+  </button>
+
+  <!-- Right: Prev/Next together -->
+  <div class="btn-row" style="display:flex;gap:8px;align-items:center;min-width:88px;justify-content:flex-end">
+    <button id="slots-prev" class="btn" type="button" aria-label="Previous day">‹ Prev</button>
+    <button id="slots-next" class="btn" type="button" aria-label="Next day">Next ›</button>
+  </div>
+
+  <!-- Keep the native date input hidden; script uses it -->
+  <input id="slot-date" type="date" class="visually-hidden" />
+</div>
+
+  </div>
+  <div id="slots" style="display:grid;gap:8px"></div>
+</div>
+
+<!-- Hidden fields the picker will set -->
+<input type="hidden" id="bStartIso" />
+<input type="hidden" id="bEndIso" />
 
           <button id="book-submit" class="btn btn-primary" type="submit">Book Demo</button>
-          <p id="bstatus" class="muted" style="margin-top:8px;"></p>
+          <p id="bstatus" class="muted" style="margin-top:8px;" aria-live="polite"></p>
         </form>
       </section>
 
@@ -356,14 +417,15 @@
     </p>
 
     <label for="c-msg">Message</label>
-    <textarea id="c-msg" name="message" rows="4" placeholder="Tell us a little about your buiness…"></textarea>
+    <textarea id="c-msg" name="message" rows="4"
+  placeholder="Tell us a little about your business…" required></textarea>
 <small class="error hidden" data-error="message">Please tell us a little about your business</small>
 
     <button id="c-submit" type="submit" class="btn btn-primary">Send</button>
 
     <!-- success/error — hidden until shown by JS -->
-    <p id="c-success" class="hidden" style="color:#22c55e;">Thanks! We received your message and will reply shortly.</p>
-    <p id="c-fail" class="hidden" style="color:#ff6b6b;">Oops — couldn’t send your message. Please try again.</p>
+    <p id="c-success" class="hidden" style="color:#22c55e;" aria-live="polite">Thanks! We received your message and will reply shortly.</p>
+    <p id="c-fail" class="hidden" style="color:#ff6b6b;" aria-live="polite">Oops — couldn’t send your message. Please try again.</p>
 
     <p class="muted" style="font-size:12px;margin-top:8px;">
       By submitting, you agree to our <a href="/privacy.html">Privacy Policy</a>.
@@ -501,9 +563,10 @@
 <!-- DEMO BOOKING (talks to your API) -->
 <script>
   // ----- CONFIGURE THIS -----
-  const API_BASE = "http://localhost:4000";  // change to prod when deployed
-  const TENANT_ID = "sandbox-dental";
-  const DEMO_MIN = 7;
+  const GAS_BASE = "https://script.google.com/macros/s/AKfycbyppwxP8HUQCqvKE_bO_sBn3yrHHHF7r3rNGzktuc-HF82uWXgUuP7FbzcdDCW4DfLF/exec";
+  const DEMO_MIN = 7;      // meeting length for calendar event
+  const DURATION_MIN = 30; // slot length the picker will use
+  const DAYS_AHEAD = 14;   // show up to 14 days out
 
   function getBErr(key) {
     return document.querySelector(`#book-demo [data-error="${key}"]`);
@@ -519,85 +582,73 @@
   }
 
   async function submitBooking(e) {
-    e.preventDefault();
-    const form = document.getElementById('book-demo');
-    const statusEl = document.getElementById('bstatus');
+  e.preventDefault();
+  const form = document.getElementById('book-demo');
+  const statusEl = document.getElementById('bstatus');
 
-    // fields
-    const name  = document.getElementById('bname').value.trim();
-    const email = document.getElementById('bemail').value.trim();
-    const phone = document.getElementById('bphone').value.trim();
-    const whenField = document.getElementById('bwhen').value;
+  const name  = document.getElementById('bname').value.trim();
+  const email = document.getElementById('bemail').value.trim();
+  const phone = document.getElementById('bphone').value.trim();
 
-    // validation (sequential, show first error only)
-    hideBAll();
-    const bad = firstBadDemo(name, email, phone);
-    if (bad) {
-      const badEl = {name:'bname', email:'bemail', phone:'bphone'}[bad];
-      getBErr(bad).classList.remove('hidden');
-      document.getElementById(badEl).focus();
-      return false;
-    }
-    if (!whenField) {
-      statusEl.textContent = "Please pick a date & time.";
-      return false;
-    }
-
-    // build times
-    const startLocal = new Date(whenField);
-    const startIso = startLocal.toISOString();
-    const endIso = new Date(startLocal.getTime() + DEMO_MIN * 60000).toISOString();
-
-    statusEl.textContent = "Booking...";
-    const phoneE164 = toE164US(phone);
-
-    try {
-      const payload = {
-        tenantId: TENANT_ID,
-        startIso,
-        endIso,
-        phone: phoneE164,
-        email,
-        notes: `Website demo request — ${name} <${email}>, ${formatPhoneLocal(phone)}`
-      };
-
-      const res = await fetch(`${API_BASE}/calendar/book`, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json().catch(() => ({}));
-
-      if (res.ok && data.ok) {
-        statusEl.textContent = "Booked! We’ve emailed your confirmation and calendar invite.";
-        form.reset();
-      } else {
-        statusEl.textContent = `Error: ${data.error || 'Failed to create event'}`;
-      }
-    } catch {
-      statusEl.textContent = "Network error. Please try again.";
-    }
+  // sequential field validation (you already have helpers wired)
+  hideBAll();
+  const bad = firstBadDemo(name, email, phone);
+  if (bad) {
+    const badEl = {name:'bname', email:'bemail', phone:'bphone'}[bad];
+    getBErr(bad).classList.remove('hidden');
+    document.getElementById(badEl).focus();
     return false;
   }
 
-  // Phone helpers reused by both forms
-  function digitsOnly(s) { return String(s || '').replace(/\D/g, ''); }
-  function formatUSPhone(input) {
-    const d = digitsOnly(input).slice(0, 10);
-    if (!d) return '';
-    if (d.length < 4) return `(${d}`;
-    if (d.length < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
-    return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
+  // pull start/end from slot picker hidden inputs
+  const startIso = document.getElementById('bStartIso').value;
+  const endIso   = document.getElementById('bEndIso').value;
+  if (!startIso || !endIso) {
+    statusEl.textContent = "Please pick a time.";
+    return false;
   }
-  function isValidPhone10(input) { return digitsOnly(input).length === 10; }
-  function toE164US(input) {
-    const d = digitsOnly(input);
-    if (d.length === 10) return `+1${d}`;
-    if (d.length === 11 && d.startsWith('1')) return `+${d}`;
-    return null;
+
+  const phoneE164 = toE164US(phone);
+  if (!phoneE164) {
+    getBErr('phone')?.classList.remove('hidden');
+    document.getElementById('bphone').focus();
+    return false;
   }
-  function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim()); }
-  function formatPhoneLocal(input) { return formatUSPhone(input); }
+
+  statusEl.textContent = "Booking...";
+
+  try {
+
+        // Apps Script: POST ?action=book  (body: { name,email,phone,startIso,endIso })
+    const res = await fetch(`${GAS_BASE}?action=book`, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name,
+        email,
+        phone: phoneE164,     // keep E.164 (+1XXXXXXXXXX)
+        startIso,
+        endIso
+      })
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.ok) {
+      statusEl.textContent = "Booked! We’ve emailed your confirmation and calendar invite.";
+      form.reset();
+      // clear any selected slot in UI
+      document.querySelectorAll('[data-slot].selected').forEach(b => b.classList.remove('selected'));
+      document.getElementById('bStartIso').value = '';
+      document.getElementById('bEndIso').value = '';
+    } else {
+      statusEl.textContent = `Error: ${data.error || 'Failed to create event'}`;
+    }
+  } catch {
+    statusEl.textContent = "Network error. Please try again.";
+  }
+  return false;
+}
 
   // Live mask for the demo phone field
   (function(){
@@ -622,6 +673,13 @@
     if (d.length < 7) return `(${d.slice(0,3)}) ${d.slice(3)}`;
     return `(${d.slice(0,3)}) ${d.slice(3,6)}-${d.slice(6)}`;
   }
+function toE164US(input) {
+  const d = (String(input||'').replace(/\D/g,'')); 
+  if (d.length === 10) return `+1${d}`;
+  if (d.length === 11 && d.startsWith('1')) return `+${d}`;
+  return null;
+}
+function formatPhoneLocal(input) { return formatUSPhone(input); }
   function isValidPhone10(input) { return digitsOnly(input).length === 10; }
   function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim()); }
   function show(el) { el && el.classList.remove('hidden'); }
@@ -718,6 +776,251 @@
   // book-a-demo (if you don't have a message field here, it will be ignored automatically)
   wireSequentialValidation('book-demo', 'book-submit', { fieldsOrder: ['name','email','phone'] });
 
+</script>
+
+<script>
+(() => {
+  // ========= Config (reuses your earlier constants) =========
+  const START_HOUR = 8;          // first slot start hour (local time)
+  const LAST_START_MINUTES_WEEKDAY = 16 * 60 + 30; // 4:30 PM
+const LAST_START_MINUTES_SAT     = 11 * 60 + 30; // 11:30 AM
+  const SLOTS_PER_BATCH = 6;     // show 6 at a time
+  const MIN_OFFSET_DAYS = 3;     // require 3 days notice
+
+  // Utilities
+  const fmtDate = (d) => d.toISOString().slice(0,10);
+  const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate()+n); return x; };
+  const labelDay = (isoDate) => {
+    const d = new Date(isoDate + 'T00:00:00');
+    return d.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' });
+  };
+  const labelTime = (isoLocal) => {
+    const d = new Date(isoLocal);
+    return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+  };
+
+  // DOM
+  const elSlots  = document.getElementById('slots');
+  const elPrev   = document.getElementById('slots-prev');
+  const elNext   = document.getElementById('slots-next');
+  const elStart  = document.getElementById('bStartIso');
+  const elEnd    = document.getElementById('bEndIso');
+    const elDate = document.getElementById('slot-date'); // optional date input if present
+
+  // Calendar button opens the hidden native date picker
+  (function () {
+    const calendarBtn = document.getElementById('slots-calendar');
+    const dateInput   = document.getElementById('slot-date');
+    if (calendarBtn && dateInput) {
+      calendarBtn.addEventListener('click', () => {
+        if (dateInput.showPicker) dateInput.showPicker();
+        else { dateInput.focus(); dateInput.click(); }
+      });
+    }
+  })();
+
+  // State
+  const minDate  = addDays(new Date(), MIN_OFFSET_DAYS);
+  let pageStart  = new Date(minDate); // always begin at the first allowed day
+  let allSlotsForDay = [];            // full filtered slot list for current day
+  let shownCount = 0;                 // how many of today's slots are currently rendered
+
+  // Wire min on optional date picker, if present
+  if (elDate) {
+    elDate.min = fmtDate(minDate);
+    elDate.value = fmtDate(pageStart);
+    elDate.addEventListener('change', () => {
+      const picked = new Date(elDate.value + 'T00:00:00');
+      pageStart = picked < minDate ? new Date(minDate) : picked;
+      loadDay();
+    });
+  }
+
+  function clearSelected() {
+    document.querySelectorAll('[data-slot]').forEach(btn => btn.classList.remove('selected'));
+  }
+  function applySelected(startIso, endIso, btn) {
+    clearSelected();
+    btn.classList.add('selected');
+    elStart.value = startIso;
+    elEnd.value   = endIso;
+  }
+
+function withinHours(slot) {
+  // slot.start is local ISO, e.g. "2025-10-07T10:30:00"
+  const d   = new Date(slot.start);
+  const dow = d.getDay(); // 0=Sun, 6=Sat
+
+  // If you want Sunday closed entirely, uncomment next line:
+  if (dow === 0) return false;
+
+  const startMins = d.getHours() * 60 + d.getMinutes();
+  const lastStartMinutes =
+    (dow === 6) ? LAST_START_MINUTES_SAT : LAST_START_MINUTES_WEEKDAY;
+
+  // Earliest start is START_HOUR:00, latest start depends on weekday/Sat
+  return startMins >= START_HOUR * 60 && startMins <= lastStartMinutes;
+}
+
+      async function fetchDaySlots(isoDate) {
+    // Apps Script: GET ?action=availability&date=YYYY-MM-DD&durationMin=30
+    const url = `${GAS_BASE}?action=availability&date=${isoDate}&durationMin=${DURATION_MIN}`;
+    const res = await fetch(url, { method: 'GET' });
+    if (!res.ok) throw new Error(`availability failed: ${res.status}`);
+    return res.json();
+  }
+
+  function renderBatch(container, fromIndex) {
+  const toIndex = Math.min(fromIndex + SLOTS_PER_BATCH, allSlotsForDay.length);
+
+  for (let i = fromIndex; i < toIndex; i++) {
+    const s = allSlotsForDay[i];
+
+    // For display: prefer local ISO if provided; otherwise convert UTC -> local
+    const displayStartIso = s.start || (s.startUtc ? new Date(s.startUtc).toISOString() : '');
+    const displayEndIso   = s.end   || (s.endUtc   ? new Date(s.endUtc).toISOString()   : '');
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    // Keep a marker for selection state; also stash UTC explicitly
+    btn.dataset.slot = s.startUtc || s.start || '';
+    btn.dataset.startUtc = s.startIsoUtc || s.startUtc || (s.start ? new Date(s.start).toISOString() : '');
+    btn.dataset.endUtc   = s.endIsoUtc   || s.endUtc   || (s.end   ? new Date(s.end).toISOString()   : '');
+    btn.className = 'btn slot';
+    btn.textContent = `${labelTime(displayStartIso)} – ${labelTime(displayEndIso)}`;
+
+    btn.addEventListener('click', () => {
+  // Always use local wall-clock times (no Z) to avoid off-by-one-day bugs
+  const startIso = s.start;   // e.g., "2025-10-24T08:00:00"
+  const endIso   = s.end;     // e.g., "2025-10-24T08:30:00"
+  applySelected(startIso, endIso, btn);
+});
+
+    container.appendChild(btn);
+  }
+
+  shownCount = toIndex;
+}
+
+  async function loadDay() {
+    
+    elSlots.innerHTML = '';
+    elStart.value = '';
+    elEnd.value   = '';
+    shownCount    = 0;
+
+    // guard next/prev buttons
+        const maxDate = addDays(minDate, DAYS_AHEAD); // inclusive window end
+    elPrev.disabled = fmtDate(pageStart) <= fmtDate(minDate);
+    // Disable NEXT if stepping one day would go beyond maxDate
+    elNext.disabled = fmtDate(addDays(pageStart, 1)) > fmtDate(maxDate);
+
+
+    const iso = fmtDate(pageStart);
+
+    // Day header
+    const dayWrap = document.createElement('div');
+    dayWrap.style.border = '1px solid rgba(255,255,255,.12)';
+    dayWrap.style.borderRadius = '10px';
+    dayWrap.style.padding = '10px';
+
+    const title = document.createElement('div');
+    title.style.fontWeight = '600';
+    title.style.marginBottom = '6px';
+    title.textContent = labelDay(iso);
+    dayWrap.appendChild(title);
+
+    const list = document.createElement('div');
+    list.style.display = 'flex';
+    list.style.flexWrap = 'wrap';
+    list.style.gap = '8px';
+    dayWrap.appendChild(list);
+
+    // Load
+    try {
+      const data = await fetchDaySlots(iso); // { slots: [...], ... }
+      // Filter to working hours and sort by start time (just in case)
+      allSlotsForDay = (data.slots || [])
+        .filter(withinHours)
+        .sort((a, b) => new Date(a.start) - new Date(b.start));
+
+      if (!allSlotsForDay.length) {
+        const msg = document.createElement('div');
+        msg.style.opacity = '.8';
+        msg.style.fontSize = '14px';
+        msg.textContent = 'No available times for this day.';
+        list.appendChild(msg);
+      } else {
+        renderBatch(list, 0);
+        
+      }
+    } catch (e) {
+      const msg = document.createElement('div');
+      msg.style.opacity = '.8';
+      msg.style.fontSize = '14px';
+      msg.textContent = 'Could not load time slots.';
+      list.appendChild(msg);
+    }
+
+    // Load more button
+    const moreWrap = document.createElement('div');
+    moreWrap.style.marginTop = '10px';
+    const moreBtn = document.createElement('button');
+    moreBtn.type = 'button';
+    moreBtn.className = 'btn';
+    moreBtn.textContent = 'Load more';
+    moreBtn.addEventListener('click', () => {
+      renderBatch(list, shownCount);
+      if (shownCount >= allSlotsForDay.length) moreBtn.disabled = true;
+      
+    });
+    if (allSlotsForDay.length <= SLOTS_PER_BATCH) moreBtn.style.display = 'none';
+    moreWrap.appendChild(moreBtn);
+    dayWrap.appendChild(moreWrap);
+
+    elSlots.appendChild(dayWrap);
+  }
+
+  // Prev/Next handlers (exactly one day step, with min guard)
+  elPrev?.addEventListener('click', () => {
+    const prev = addDays(pageStart, -1);
+    pageStart = prev < minDate ? new Date(minDate) : prev;
+    if (elDate) elDate.value = fmtDate(pageStart);
+    loadDay();
+  });
+  elNext?.addEventListener('click', () => {
+    pageStart = addDays(pageStart, 1);
+    if (elDate) elDate.value = fmtDate(pageStart);
+    loadDay();
+  });
+
+  // Hook booking button to require a selected slot (keeps your existing submit logic)
+    const bookBtn = document.querySelector('#book-submit, button[data-book-submit], #bookBtn');
+if (bookBtn) {
+  bookBtn.addEventListener('click', (e) => {
+    if (!elStart.value || !elEnd.value) {
+      e.preventDefault();
+
+      // Show a gentle prompt near the booking status
+      const statusEl = document.getElementById('bstatus');
+      if (statusEl) {
+        statusEl.textContent = 'Please pick a time.';
+        statusEl.style.color = '#ffb4b4';
+      }
+
+      // Move focus to the first visible slot to guide the user
+      const firstSlotBtn = document.querySelector('.slot-grid .slot, #slot-grid .slot');
+      if (firstSlotBtn) firstSlotBtn.focus();
+
+      return false;
+    }
+    // if we have both hidden inputs, allow your normal handler to proceed
+  }, { capture: true });
+}
+
+  // Initial load
+  loadDay();
+})();
 </script>
 
 
