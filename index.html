@@ -8,7 +8,7 @@
   <meta name="description" content="Never miss another lead. NovaDesk responds instantly, qualifies, and books jobs to your calendar—24/7." />
 
   <!-- Canonical -->
-  <link rel="canonical" href="https://www.NovaDeskApp.com/">
+  <link rel="canonical" href="https://www.novadeskapp.com/">
 
   <!-- Favicon (replace with your own) -->
   <link rel="icon" href="/favicon.ico" />
@@ -16,15 +16,15 @@
   <!-- Open Graph -->
   <meta property="og:title" content="NovaDesk — AI Receptionist that books jobs 24/7" />
   <meta property="og:description" content="Never miss another lead. NovaDesk responds instantly, qualifies, and books jobs to your calendar—24/7." />
-  <meta property="og:url" content="https://www.NovaDeskApp.com/" />
+  <meta property="og:url" content="https://www.novadeskapp.com/" />
   <meta property="og:type" content="website" />
-  <meta property="og:image" content="https://www.NovaDeskApp.com/og-image.png" />
+  <meta property="og:image" content="https://www.novadeskapp.com/og-image.png" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="NovaDesk — AI Receptionist that books jobs 24/7" />
   <meta name="twitter:description" content="Never miss another lead. NovaDesk responds instantly, qualifies, and books jobs to your calendar—24/7." />
-  <meta name="twitter:image" content="https://www.NovaDeskApp.com/og-image.png" />
+  <meta name="twitter:image" content="https://www.novadeskapp.com/og-image.png" />
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -146,7 +146,7 @@
     "applicationCategory": "BusinessApplication",
     "operatingSystem": "Web",
     "offers": { "@type": "Offer", "priceCurrency": "USD", "price": "497", "description": "Monthly subscription" },
-    "publisher": { "@type": "Organization", "name": "NovaDesk", "url": "https://www.NovaDeskApp.com" }
+    "publisher": { "@type": "Organization", "name": "NovaDesk", "url": "https://www.novadeskapp.com" }
   }
   </script>
 </head>
@@ -327,12 +327,12 @@
     <div class="container bottom-sections">
 
 <!-- BOOK DEMO -->
-      <section class="calendly" id="booking">
+      <section class="book-demo" id="booking">
         <h2>Book a 7-minute demo</h2>
 
         <form id="book-demo" onsubmit="return submitBooking(event)" class="card" style="display:grid;gap:10px; padding:16px; border-radius:12px; max-width:520px" novalidate>
           <label for="bname">Name</label>
-          <input id="bname" name="name" type="text" autocomplete="name" required required placeholder="Jane Doe" />
+          <input id="bname" name="name" type="text" autocomplete="name" required placeholder="Jane Doe" />
 <small class="error hidden" data-error="name">Please enter your name</small>
 
           <label for="bemail">Email</label>
@@ -447,7 +447,7 @@
     <div>
       <a href="/privacy.html">Privacy</a> ·
       <a href="/terms.html">Terms</a> ·
-      <a href="mailto:hello@NovaDeskApp.com">hello@NovaDeskApp.com</a>
+      <a href="mailto:hello@novadeskapp.com">hello@novadeskapp.com</a>
     </div>
   </div>
 </footer>
@@ -677,7 +677,6 @@ function toE164US(input) {
   if (d.length === 11 && d.startsWith('1')) return `+${d}`;
   return null;
 }
-function formatPhoneLocal(input) { return formatUSPhone(input); }
   function isValidPhone10(input) { return digitsOnly(input).length === 10; }
   function isValidEmail(s) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(s || '').trim()); }
   function show(el) { el && el.classList.remove('hidden'); }
@@ -1009,7 +1008,7 @@ if (bookBtn) {
       }
 
       // Move focus to the first visible slot to guide the user
-      const firstSlotBtn = document.querySelector('.slot-grid .slot, #slot-grid .slot');
+      const firstSlotBtn = document.querySelector('#slots .slot');
       if (firstSlotBtn) firstSlotBtn.focus();
 
       return false;
