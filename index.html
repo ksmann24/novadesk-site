@@ -888,10 +888,10 @@ function withinHours(slot) {
     btn.className = 'btn slot';
     btn.textContent = `${labelTime(displayStartIso)} – ${labelTime(displayEndIso)}`;
 
-    btn.addEventListener('click', () => {
-  // Always use local wall-clock times (no Z) to avoid off-by-one-day bugs
-  const startIso = s.start;   // e.g., "2025-10-24T08:00:00"
-  const endIso   = s.end;     // e.g., "2025-10-24T08:30:00"
+   btn.addEventListener('click', () => {
+  // Send LOCAL strings to Apps Script (avoid Z/UTC to prevent hour-shifts)
+  const startIso = s.start;  // e.g., "2025-10-24T08:00:00"
+  const endIso   = s.end;    // e.g., "2025-10-24T08:30:00"
   applySelected(startIso, endIso, btn);
 });
 
