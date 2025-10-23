@@ -522,25 +522,23 @@
       submitBtn.disabled = true;
       submitBtn.textContent = 'Sending…';
       try {
-        const res = await fetch('/contact', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            name: fields.name.value.trim(),
-            email: fields.email.value.trim(),
-            phone: fields.phone.value.trim(),
-            message: fields.message.value.trim()
-          })
-        });
-        if (res.ok) {
-          successEl.classList.remove('hidden');
-          form.reset();
-        } else {
-          failEl.classList.remove('hidden');
-        }
-      } catch {
-        failEl.classList.remove('hidden');
-      } finally {
+        // Send to Apps Script (same GAS_BASE you use for booking)
+const qs = new URLSearchParams({
+   action: 'contact',
+   name: fields.name.value.trim(),
+   email: fields.email.value.trim(),
+   phone: fields.phone.value.trim(),
+   message: fields.message.value.trim()
+ }).toString();
+
+ const res = await fetch(`${GAS_BASE}?${qs}`, { method: 'GET' });
+ const data = await res.json().catch(() => ({}));
+ if (res.ok && data.ok) {
+   successEl.classList.remove('hidden');
+   form.reset();
+ } else {
+   failEl.classList.remove('hidden');
+ } finally {
         submitBtn.disabled = false;
         submitBtn.textContent = 'Send';
       }
