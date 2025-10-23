@@ -525,28 +525,31 @@
 
       // ready to submit
       submitBtn.disabled = true;
-      submitBtn.textContent = 'Sending…';
-      try {
-        // Send to Apps Script (same GAS_BASE you use for booking)
-const qs = new URLSearchParams({
-   action: 'contact',
-   name: fields.name.value.trim(),
-   email: fields.email.value.trim(),
-   phone: fields.phone.value.trim(),
-   message: fields.message.value.trim()
- }).toString();
+submitBtn.textContent = 'Sending…';
+try {
+  const qs = new URLSearchParams({
+    action: 'contact',
+    name:   fields.name.value.trim(),
+    email:  fields.email.value.trim(),
+    phone:  fields.phone.value.trim(),
+    message:fields.message.value.trim()
+  }).toString();
 
- const res = await fetch(`${GAS_BASE}?${qs}`, { method: 'GET' });
- const data = await res.json().catch(() => ({}));
- if (res.ok && data.ok) {
-   successEl.classList.remove('hidden');
-   form.reset();
- } else {
-   failEl.classList.remove('hidden');
- } finally {
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Send';
-      }
+  const res  = await fetch(`${GAS_BASE}?${qs}`, { method: 'GET' });
+  const data = await res.json().catch(() => ({}));
+
+  if (res.ok && data.ok) {
+    successEl.classList.remove('hidden');
+    form.reset();
+  } else {
+    failEl.classList.remove('hidden');
+  }
+} catch (err) {
+  failEl.classList.remove('hidden');
+} finally {
+  submitBtn.disabled = false;
+  submitBtn.textContent = 'Send';
+}
     });
 
     // per-field hide-on-input
