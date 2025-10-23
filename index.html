@@ -469,6 +469,11 @@
   document.getElementById('year').textContent = new Date().getFullYear();
 </script>
 
+<script>
+  // Global config used by both forms
+  window.GAS_BASE = "https://script.google.com/macros/s/AKfycbyppwxP8HUQCqvKE_bO_sBn3yrHHHF7r3rNGzktuc-HF82uWXgUuP7FbzcdDCW4DfLF/exec";
+</script>
+  
 <!-- SALES FORM SUBMIT (to /contact) with sequential validation -->
 <script>
   (function () {
@@ -561,7 +566,6 @@ const qs = new URLSearchParams({
 <!-- DEMO BOOKING (talks to your API) -->
 <script>
   // ----- CONFIGURE THIS -----
-  const GAS_BASE = "https://script.google.com/macros/s/AKfycbyppwxP8HUQCqvKE_bO_sBn3yrHHHF7r3rNGzktuc-HF82uWXgUuP7FbzcdDCW4DfLF/exec";
   const DEMO_MIN = 7;      // meeting length for calendar event
   const DURATION_MIN = 30; // slot length the picker will use
   const DAYS_AHEAD = 14;   // show up to 14 days out
